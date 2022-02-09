@@ -31,7 +31,7 @@ class AuthController {
         throw new Error('Invalid email')
       }
 
-      user.password = ''
+      delete user.password
       const token = jwt.sign({ _id: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' })
 
       return res.status(200).json({
