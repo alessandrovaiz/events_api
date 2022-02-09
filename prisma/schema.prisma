@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model address {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  street            String?
+  number            String?
+  complement        String?
+  zipcode           String?
+  district          String?
+  city              String?
+  created_at        DateTime            @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?           @db.Timestamp(6)
+  address_event     address_event[]
+  company_addresses company_addresses[]
+  user_addresses    user_addresses[]
+}
+
+model address_event {
+  id         String  @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  address_id String  @db.Uuid
+  event_id   String  @db.Uuid
+  address    address @relation(fields: [address_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkaddress_ev976372")
+  event      event   @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkaddress_ev329279")
+
+  @@id([id, address_id, event_id])
+}
+
+model batch {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ticket_price         Decimal   @db.Decimal(10, 2)
+  ticket_id            String    @db.Uuid
+  amount               Int
+  is_active            Boolean   @default(true)
+  batch_effective_date DateTime  @db.Timestamp(6)
+  created_at           DateTime  @default(now()) @db.Timestamp(6)
+  updated_at           DateTime? @db.Timestamp(6)
+  ticket               ticket    @relation(fields: [ticket_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkbatch581124")
+}
+
+model company {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String
+  trading_name      String?
+  phone             String
+  email             String
+  cnpj              String
+  is_active         Boolean             @default(true)
+  company_type_id   String              @db.Uuid
+  thumbnail_url     String?
+  created_at        DateTime            @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?           @db.Timestamp(6)
+  company_type      company_type        @relation(fields: [company_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkcompany646184")
+  company_addresses company_addresses[]
+  event             event[]
+}
+
+model company_addresses {
+  id         String  @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  address_id String  @db.Uuid
+  company_id String  @db.Uuid
+  address    address @relation(fields: [address_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkcompany_ad477761")
+  company    company @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkcompany_ad925190")
+
+  @@id([id, address_id, company_id])
+}
+
+model company_type {
+  id      String    @id @db.Uuid
+  code    Int
+  name    String
+  company company[]
+}
+
+model event {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  description   String
+  event_date    DateTime        @db.Timestamp(6)
+  is_active     Boolean         @default(true)
+  company_id    String          @db.Uuid
+  thumbnail_url String?
+  created_at    DateTime        @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?       @db.Timestamp(6)
+  company       company         @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkevent705878")
+  address_event address_event[]
+  ticket        ticket[]
+}
+
+model role {
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code        Int
+  name        String
+  description String?
+  user        user[]
+}
+
+model ticket {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code            Int
+  expiration_date DateTime       @db.Timestamp(6)
+  created_at      DateTime       @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?      @db.Timestamp(6)
+  event_id        String         @db.Uuid
+  event           event          @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkticket947665")
+  batch           batch[]
+  user_tickets    user_tickets[]
+}
+
+model user {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  first_name     String
+  last_name      String
+  email          String
+  password       String
+  is_active      Boolean          @default(true)
+  avatar_url     String?
+  role_id        String           @db.Uuid
+  created_at     DateTime         @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?        @db.Timestamp(6)
+  role           role             @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkuser994439")
+  user_addresses user_addresses[]
+  user_tickets   user_tickets[]
+}
+
+model user_addresses {
+  id         String  @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String  @db.Uuid
+  address_id String  @db.Uuid
+  address    address @relation(fields: [address_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkuser_addre968504")
+  user       user    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkuser_addre865705")
+
+  @@id([id, user_id, address_id])
+}
+
+model user_tickets {
+  id             String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id        String   @db.Uuid
+  ticket_id      String   @db.Uuid
+  amount         Int
+  purchase_date  DateTime @db.Timestamp(6)
+  payment_method String
+  created_at     DateTime @default(now()) @db.Timestamp(6)
+  ticket         ticket   @relation(fields: [ticket_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkuser_ticke416670")
+  user           user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkuser_ticke143587")
+
+  @@id([id, user_id, ticket_id])
+}
