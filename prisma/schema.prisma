@@ -15,6 +15,7 @@ model address {
   zipcode           String?
   district          String?
   city              String?
+  state             String?
   created_at        DateTime            @default(now()) @db.Timestamp(6)
   updated_at        DateTime?           @db.Timestamp(6)
   address_event     address_event[]
@@ -72,8 +73,8 @@ model company_addresses {
 }
 
 model company_type {
-  id      String    @id @db.Uuid
-  code    Int
+  id      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code    Int       @unique
   name    String
   company company[]
 }
@@ -103,7 +104,7 @@ model role {
 
 model ticket {
   id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  code            Int
+  code            Int            @unique
   expiration_date DateTime       @db.Timestamp(6)
   created_at      DateTime       @default(now()) @db.Timestamp(6)
   updated_at      DateTime?      @db.Timestamp(6)
