@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import * as bcrypt from 'bcryptjs'
 import { event } from '@prisma/client'
 import eventDao from '../dao/eventDao'
 import eventValidator from '../validators/eventValidator'
@@ -7,7 +6,6 @@ import eventValidator from '../validators/eventValidator'
 // import UserDao from '../dao/UserDao'
 
 class EventController {
-
     public async fetch(req: Request, res: Response): Promise<Response> {
         try {
             const result = await eventDao.fetch()

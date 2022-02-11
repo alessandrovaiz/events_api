@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 let eventDao = {
 
-    async fetch() {
+    async fetch() : Promise<event[] | undefined>{
         const result = await prisma.event.findMany({
             where: { is_active: true },
             orderBy: { created_at: 'desc' },

@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 let batchDao = {
 
-    async fetch() {
+    async fetch() : Promise<batch[] | undefined> {
         const result = await prisma.batch.findMany({
             where: { is_active: true },
             orderBy: { created_at: 'desc' },
