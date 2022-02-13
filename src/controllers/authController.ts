@@ -40,6 +40,7 @@ class AuthController {
         token
       })
     } catch (err: unknown) {
+      console.log((err as Error).message)
       return res.status(401).json({
         error: true,
         message: (err as Error).message
