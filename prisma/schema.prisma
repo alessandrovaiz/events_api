@@ -34,15 +34,16 @@ model address_event {
 }
 
 model batch {
-  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  ticket_price         Decimal   @db.Decimal(10, 2)
-  ticket_id            String    @db.Uuid
+  id                   String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ticket_price         Decimal        @db.Decimal(10, 2)
+  ticket_id            String         @db.Uuid
   amount               Int
-  is_active            Boolean   @default(true)
-  batch_effective_date DateTime  @db.Timestamp(6)
-  created_at           DateTime  @default(now()) @db.Timestamp(6)
-  updated_at           DateTime? @db.Timestamp(6)
-  ticket               ticket    @relation(fields: [ticket_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkbatch581124")
+  is_active            Boolean        @default(true)
+  batch_effective_date DateTime       @db.Timestamp(6)
+  created_at           DateTime       @default(now()) @db.Timestamp(6)
+  updated_at           DateTime?      @db.Timestamp(6)
+  ticket               ticket         @relation(fields: [ticket_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkbatch581124")
+  user_tickets         user_tickets[]
 }
 
 model company {
@@ -104,7 +105,7 @@ model role {
 
 model ticket {
   id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  code            Int            @unique
+  code            Int            @unique @default(autoincrement())
   expiration_date DateTime       @db.Timestamp(6)
   created_at      DateTime       @default(now()) @db.Timestamp(6)
   updated_at      DateTime?      @db.Timestamp(6)
@@ -144,12 +145,14 @@ model user_tickets {
   id             String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user_id        String   @db.Uuid
   ticket_id      String   @db.Uuid
+  batch_id       String   @db.Uuid
   amount         Int
-  purchase_date  DateTime @db.Timestamp(6)
+  purchase_date  DateTime @default(now()) @db.Timestamp(6)
   payment_method String
   created_at     DateTime @default(now()) @db.Timestamp(6)
+  batch          batch    @relation(fields: [batch_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkuser_ticke946989")
   ticket         ticket   @relation(fields: [ticket_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkuser_ticke416670")
   user           user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkuser_ticke143587")
 
-  @@id([id, user_id, ticket_id])
+  @@id([id, user_id, ticket_id, batch_id])
 }
