@@ -26,7 +26,10 @@ services:
       DATABASE_URL: postgresql://${DB_USERNAME}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?schema=public
     networks:
       - mbevents-network
-    command: npm run dev
+    command: > 
+        sh -c "npx prisma migrate dev &&
+               npx prisma generate &&
+               npm run dev"
     restart: always
     depends_on:
       - db
@@ -34,7 +37,7 @@ services:
       - '3333:3333'
     build: .
     volumes:
-      - /usr/src/app
+      - .:/src
 
     
     

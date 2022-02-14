@@ -1,12 +1,6 @@
 # Setup
-> rodar o docker-compose up para criar o container do postgres
+> rodar o comando docker-compose build
 
-> quando o container estiver rodando, rodar os comandos abaixo na pasta do projeto: 
+> rodar o comando docker-compose up
 
-> npx prisma migrate dev
-
-> npx prisma generate
-
-> npx prisma db seed
-
-> Após isso, rodar docker-compose up novamente e o projeto estará rodando.
+> caso o banco de dados esteja vazio, rodar o comando npx prisma db seed na pasta do projeto
