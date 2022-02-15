@@ -113,6 +113,7 @@ async function main() {
 
     let eventMbLabs = await prisma.event.create({
         data: {
+            id: '25c533f5-2d86-42d9-8fac-af2cd99290e2',
             name: 'Inauguração mb labs',
             description: 'Inauguração com festa do henrique e juliano para a galera!!',
             event_date: new Date(2023, 1, 1, 1, 1),
@@ -132,7 +133,6 @@ async function main() {
     let eventTicket = await prisma.ticket.create({
         data: {
             id: '394faf89-1b3a-41f7-8fcd-4f07d0c6f238',
-            code: 0,
             expiration_date: new Date(2023, 1, 1, 1, 1),
             event: {
                 connect: {
@@ -152,6 +152,17 @@ async function main() {
             is_active: true,
             ticket_id: eventTicket.id
          }
+    })
+
+    let userTicket = await prisma.user_tickets.create({
+        data: {
+            id: '2f122edc-cd78-483c-99b5-d99a3afaf3a9',
+            ticket_id: eventTicket.id,
+	        batch_id: ticketBatch.id,
+            user_id: user.id,
+	        amount: 4,
+	        payment_method: "Crédito"
+        }
     })
 
 
