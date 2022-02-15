@@ -82,7 +82,7 @@ class EventController {
 
     public async delete(req: Request, res: Response): Promise<Response> {
         try {
-            const eventId = req.params.userId
+            const eventId = req.params.eventId
             const result = await eventDao.delete(eventId)
 
             return res.status(200).json({ error: false, result })
