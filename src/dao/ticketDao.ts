@@ -8,7 +8,7 @@ let ticketDao = {
             where: {
                 expiration_date: {
                     gte: new Date()
-                }
+                },
             },
             orderBy: { created_at: 'desc' },
             include: {
@@ -83,7 +83,6 @@ let ticketDao = {
             data: {
                 expiration_date: ticket.expiration_date,
                 event_id: ticket.event_id,
-                code: 1,
                 batch: {
                     create: batch
                 }

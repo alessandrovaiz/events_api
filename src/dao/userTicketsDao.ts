@@ -11,7 +11,6 @@ let userTicketsDao = {
                 ticket: {
                     select: {
                         expiration_date: true,
-                        code: true,
                         created_at: true,
                         id: true,
                         event: {
@@ -35,7 +34,6 @@ let userTicketsDao = {
                 ticket: {
                     select: {
                         expiration_date: true,
-                        code: true,
                         created_at: true,
                         id: true,
                         event: {
@@ -51,7 +49,7 @@ let userTicketsDao = {
         return result
     },
 
-    async store(data: user_tickets): Promise<any[] | undefined> {
+    async store(data: user_tickets): Promise<any | undefined> {
         /**
          * Busca o lote atual do ticket
          */
@@ -81,8 +79,8 @@ let userTicketsDao = {
             }
         })
 
-        const result = await prisma.$transaction([createUserTicket, updateBatch])
-        return result
+        await prisma.$transaction([createUserTicket, updateBatch])
+        return true
     },
 
 
@@ -126,9 +124,9 @@ let userTicketsDao = {
         })
 
 
-        let result = await prisma.$transaction([updateAmount, deleteTicket])
+        await prisma.$transaction([updateAmount, deleteTicket])
 
-        return result
+        return true
     }
 }
 
