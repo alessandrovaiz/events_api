@@ -10,6 +10,8 @@ router.get('/addresses/:addressId', authMiddleware, addressController.index);
 
 router.post('/addresses', authMiddleware, addressController.store);
 
+router.post('/addresses/link-unlink/', authMiddleware, addressController.linkAddressWithEntity);
+
 router.put('/addresses/:addressId', authMiddleware, addressController.update);
 
 router.delete('/addresses/:addressId', authMiddleware, addressController.delete);

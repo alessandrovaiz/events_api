@@ -80,6 +80,61 @@ class addressController {
         }
     }
 
+    /**
+     * Método que vincula ou desvincula o endereço de uma entidade
+     * 
+     * @bodyParam {entity_id} - id da entidade
+     * @bodyParam {address_id} - id do endereço
+     * @bodyParam {unlink} - flag indicando se é para remover ou vincular   
+     * 
+     */
+    public async linkAddressWithEntity(req: Request, res: Response): Promise<Response> {
+        try {
+            const validation = addressValidator.validateLinkOrUnlinkAddressWithEntity(req.body)
+            if (!validation.success) {
+                return res.status(400).json({ error: true, errors: validation.errors })
+            }
+
+            let { address_id, entity, entity_id, unlink } = req.body
+            let result: any
+
+            if (!unlink) {
+                switch (entity) {
+                    case 'user': result = await addressDao.linkAddressWithUser(address_id, entity_id); break;
+                    case 'company': result = await addressDao.linkAddressWithCompany(address_id, entity_id); break;
+                    case 'event': result = await addressDao.linkAddressWithEvent(address_id, entity_id); break;
+                    default: {
+                        return res.status(500).json({
+                            error: true,
+                            message: 'Invalid entity'
+                        })
+                    }
+                }
+            } else {
+                switch (entity) {
+                    case 'user': result = await addressDao.unlinkAddressFromUser(address_id, entity_id); break;
+                    case 'company': result = await addressDao.unlinkAddressFromCompany(address_id, entity_id); break;
+                    case 'event': result = await addressDao.unlinkAddressFromEvent(address_id, entity_id); break;
+                    default: {
+                        return res.status(500).json({
+                            error: true,
+                            message: 'Invalid entity'
+                        })
+                    }
+                }
+            }
+
+            return res.status(200).json({ error: false, result })
+
+        } catch (err: unknown) {
+            console.log((err as Error).message)
+            return res.status(500).json({
+                error: true,
+                message: (err as Error).message
+            })
+        }
+    }
+
     public async delete(req: Request, res: Response): Promise<Response> {
         try {
             const addressId = req.params.addressId
