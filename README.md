@@ -1,3 +1,6 @@
+Api para gerenciar a venda de ingressos para eventos de empresas e universidades 
+
+
 # Setup
 > rodar o comando docker-compose build
 
